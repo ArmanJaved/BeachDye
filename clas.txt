@@ -1,0 +1,351 @@
+package e.brainplow.admindoctor;
+
+import android.app.ProgressDialog;
+import android.content.ContentResolver;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.webkit.MimeTypeMap;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.Toast;
+
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.IOException;
+
+public class MainActivity extends AppCompatActivity {
+
+    // Folder path for Firebase Storage.
+    String Storage_Path = "All_Image_Uploads/";
+
+    // Root Database Name for Firebase Database.
+    public static final String Database_Path = "categories";
+
+    // Creating button.
+    Button UploadButton, DisplayImageButton;
+
+    ImageView ChooseButton;
+
+    ImageView chos_btn;
+    // Creating EditText.
+    EditText ImageName;
+
+    int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
+    // Creating ImageView.
+
+    ImageView SelectImage;
+
+    String cat;
+
+    String autolat;
+    // Creating URI.
+    Uri FilePathUri;
+
+    String loc, add, con;
+
+
+    String[] CategoryDoctor = {"Allergy Specialist","Audiologist","Breast Surgeon","Cardiac Surgeon",
+            "Cardiologist","Chest Specialist","Chiropractic Physician","Clinical Dietition", "Consultant ENT", "Consultant Family Physician",
+            "Cosmetic Dentistry", "Cosmetic Medicine", "Dental Maxillo Facial Surgeon", "Dentist", "Dermatologist", "Endocrinologist", "Endoscopic Sinus Specialist",
+            "Endoscopic Surgeon", "Family Physician", "Gastroenterologist", "General Physician", "General Surgeon", "Geriatrician", "Hematologist & Oncologist (Cancer)",
+            "Implantologist", "Infection Diseases", "Infertility Specialist", "Nephtologist", "Neuro Physician", "Neurosurgeon", "Obstetrics", "Oncologist",
+            "Ophthalmologist", "Orthopediatrician", "Orthopedic", "Orthopedic Surgeon", "Pain Management", "Pediatric Cardiologist", "Pediatrician",
+            "Pediatrician Surgeon", "Physical Medicine & Rehabilitation", "Physician", "Physiotherapist", "Plastic Surgeon", "Psychiatrist", "Psychologist",
+            "Pulmonologist", "Radio Logist", "Rheumatology", "Skin Specialist", "Sonologist", "Special Education & Behavioral Counsellor", "Speech Therapist",
+            "Spine Specialist", "Surgeon", "Thalassemia", "Thoracic Surgeon", "Urologist", "Vascular Surgeon"};
+
+
+    String[] categoriesarr = {"Allergy_Specialist","Audiologist","Breast_surgeon","Cardiac_Surgeon",
+            "Cardiologist","Chest_specialist","Chiropractic_physician","Clinical_dietition", "Consultant_ent", "Consultant_Family_Physician",
+            "Cosmetic_Dentistry", "Cosmetic_Medicine", "Dental_Maxillo_Facial_Surgeon", "Dentist", "Dermatologist", "Endocrinologist", "Endoscopic_Sinus_Specialist",
+            "Endoscopic_Surgeon", "Family_Physician", "Gastroenterologist", "General_Physician", "General_Surgeon", "Geriatrician", "Hematologist_&_Oncologist_(Cancer)",
+            "Implantologist", "Infection_Diseases", "Infertility_Specialist", "Nephtologist", "Neuro_Physician", "Neurosurgeon", "Obstetrics", "Oncologist",
+            "Ophthalmologist", "Orthopediatrician", "Orthopedic", "Orthopedic_Surgeon", "Pain_Management", "Pediatric_Cardiologist", "Pediatrician",
+            "Pediatrician_Surgeon", "Physical_Medicine_&_Rehabilitation", "Physician", "Physiotherapist", "Plastic_Surgeon", "Psychiatrist", "Psychologist",
+            "Pulmonologist", "Radio_Logist", "Rheumatology", "Skin_Specialist", "Sonologist", "Special Education_&_Behavioral_Counsellor", "Speech_Therapist",
+            "Spine_Specialist", "Surgeon", "Thalassemia", "Thoracic_Surgeon", "Urologist", "Vascular_Surgeon"};
+
+    // Creating StorageReference and DatabaseReference object.
+    StorageReference storageReference;
+    DatabaseReference databaseReference;
+
+    // Image request code for onActivityResult() .
+    int Image_Request_Code = 7;
+
+    ProgressDialog progressDialog;
+    EditText btnchose, docaddres, doccont;
+
+
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        btnchose = (EditText)findViewById(R.id.chooseloc);
+        docaddres = (EditText)findViewById(R.id.docadd);
+        doccont = (EditText)findViewById(R.id.doccont);
+
+        btnchose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                autoComplet();
+            }
+        });
+
+        Spinner s = (Spinner) findViewById(R.id.Spinner01);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, CategoryDoctor);
+        adapter.setDropDownViewResource(android.R.layout.simple_list_item_1);
+        s.setAdapter(adapter);
+
+        s.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> arg0, View arg1,
+                                       int arg2, long arg3) {
+
+                cat = categoriesarr[arg2];
+                Toast.makeText(getApplicationContext(), cat, Toast.LENGTH_LONG).show();
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+                // TODO Auto-generated method stub
+
+            }
+        });
+
+        // Assign FirebaseStorage instance to storageReference.
+        storageReference = FirebaseStorage.getInstance().getReference();
+
+        // Assign FirebaseDatabase instance with root database name.
+        databaseReference = FirebaseDatabase.getInstance().getReference(Database_Path);
+
+        //Assign ID'S to button.
+        ChooseButton = (ImageView)findViewById(R.id.ButtonChooseImage);
+        UploadButton = (Button)findViewById(R.id.ButtonUploadImage);
+
+
+        // Assign ID's to EditText.
+        ImageName = (EditText)findViewById(R.id.ImageNameEditText);
+
+        // Assign ID'S to image view.
+        SelectImage = (ImageView)findViewById(R.id.ShowImageView);
+
+        // Assigning Id to ProgressDialog.
+        progressDialog = new ProgressDialog(MainActivity.this);
+
+        // Adding click listener to Choose image button.
+        ChooseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                // Creating intent.
+                Intent intent = new Intent();
+
+                // Setting intent type as image to select image from phone storage.
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Please Select Image"), Image_Request_Code);
+
+            }
+        });
+
+
+        // Adding click listener to Upload image button.
+        UploadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                // Calling method to upload selected image on Firebase storage.
+                UploadImageFileToFirebaseStorage();
+
+            }
+        });
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
+
+
+        if (requestCode == Image_Request_Code && resultCode == RESULT_OK && data != null && data.getData() != null) {
+
+            FilePathUri = data.getData();
+
+            try {
+
+                // Getting selected image into Bitmap.
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), FilePathUri);
+
+                // Setting up bitmap selected image into ImageView.
+                SelectImage.setImageBitmap(bitmap);
+
+                // After selecting image change choose button above text.
+
+            } catch (IOException e) {
+
+                e.printStackTrace();
+            }
+        }
+//        else if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
+//            if (resultCode == RESULT_OK) {
+//                Place place = PlaceAutocomplete.getPlace(this, data);
+//                String st = (String) place.getName();
+//
+//                btnchose.setText(st);
+//
+//                LatLng latlng=place.getLatLng();
+//                autolat = String.valueOf(latlng);
+//                String ASD = "";
+//
+//
+//            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+//                Status status = PlaceAutocomplete.getStatus(this, data);
+//
+//                // TODO: Handle the error.
+//
+//
+//            } else if (resultCode == RESULT_CANCELED) {
+//                // The user canceled the operation.
+//            }
+//        }
+    }
+
+    // Creating Method to get the selected image file Extension from File Path URI.
+    public String GetFileExtension(Uri uri) {
+
+
+        loc = btnchose.getText().toString().trim();
+        add = docaddres.getText().toString().trim();
+        con = doccont.getText().toString().trim();
+        ContentResolver contentResolver = getContentResolver();
+
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+
+        // Returning the file Extension.
+        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
+
+    }
+
+    // Creating UploadImageFileToFirebaseStorage method to upload image on storage.
+    public void UploadImageFileToFirebaseStorage() {
+
+        // Checking whether FilePathUri Is empty or not.
+        if (FilePathUri != null) {
+
+            // Setting progressDialog Title.
+            progressDialog.setTitle("Ad is Uploading...");
+
+            // Showing progressDialog.
+            progressDialog.show();
+
+            // Creating second StorageReference.
+            StorageReference storageReference2nd = storageReference.child(Storage_Path + System.currentTimeMillis() + "." + GetFileExtension(FilePathUri));
+
+            // Adding addOnSuccessListener to second StorageReference.
+            storageReference2nd.putFile(FilePathUri)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                            // Getting image name from EditText and store into string variable.
+                            String TempImageName = ImageName.getText().toString().trim();
+
+                            // Hiding the progressDialog after done uploading.
+                            progressDialog.dismiss();
+
+                            // Showing toast message after done uploading.
+                            Toast.makeText(getApplicationContext(), "Image Uploaded Successfully ", Toast.LENGTH_LONG).show();
+
+                            @SuppressWarnings("VisibleForTests")
+                            DoctorDetails imageUploadInfo = new DoctorDetails(TempImageName, taskSnapshot.getDownloadUrl().toString(),"hosp",
+                                    "add","cont","latlon");
+
+//                            DoctorDetails imageUploadInfo = new DoctorDetails(TempImageName, taskSnapshot.getDownloadUrl().toString(),loc,add,con,autolat);
+
+                            // Getting image upload ID.
+                            String ImageUploadId = databaseReference.push().getKey();
+
+                            // Adding image upload id s child element into databaseReference.
+                            databaseReference.child(cat).child(ImageUploadId).setValue(imageUploadInfo);
+                        }
+                    })
+                    // If something goes wrong .
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+
+                            // Hiding the progressDialog.
+                            progressDialog.dismiss();
+
+                            // Showing exception erro message.
+                            Toast.makeText(MainActivity.this, exception.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    })
+
+                    // On progress change upload time.
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+
+                            // Setting progressDialog Title.
+                            progressDialog.setTitle("Image is Uploading...");
+
+                        }
+                    });
+        } else {
+
+            Toast.makeText(MainActivity.this, "Please Select Image or Add Image Name", Toast.LENGTH_LONG).show();
+
+        }
+    }
+
+    void autoComplet() {
+
+        try {
+            Intent intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY).build(this);
+
+            startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
+        } catch (GooglePlayServicesRepairableException e) {
+            // TODO: Handle the error.
+        } catch (GooglePlayServicesNotAvailableException e) {
+            // TODO: Handle the error.
+        }
+
+    }
+
+
+
+
+
+
+}

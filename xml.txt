@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="e.brainplow.admindoctor.MainActivity"
+    android:layout_margin="20dp">
+
+
+
+    <ScrollView
+        android:fillViewport="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Add Doctor"
+            android:id="@+id/textview"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            android:gravity="left"
+            android:layout_marginTop="20dp"/>
+
+        <EditText
+            android:textSize="16sp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/ImageNameEditText"
+            android:layout_marginTop="20dp"
+            android:hint="Doctor Name"
+            android:gravity="left"/>
+
+        <EditText
+            android:textColor="#000"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:hint="Doctor Hospital Location"
+            android:id="@+id/chooseloc"
+            android:layout_marginTop="20dp"
+            android:textSize="16sp"
+            android:textAllCaps="false" />
+
+        <EditText
+            android:textColor="#000"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:hint="Doctor Address"
+            android:id="@+id/docadd"
+            android:layout_marginTop="20dp"
+            android:textSize="16sp"
+            android:textAllCaps="false" />
+
+        <EditText
+            android:textColor="#000"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:hint="Doctor Contact"
+            android:id="@+id/doccont"
+            android:layout_marginTop="20dp"
+            android:textSize="16sp"
+            android:textAllCaps="false" />
+
+        <Spinner
+
+            android:id="@+id/Spinner01"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"/>
+
+
+
+
+        <LinearLayout
+            android:gravity="center"
+            android:layout_margin="15dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:src="@drawable/images"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:id="@+id/ShowImageView"
+                android:layout_margin="20dp"/>
+            <ImageView
+                android:src="@android:drawable/ic_menu_edit"
+                android:layout_gravity="center_horizontal"
+                android:textAllCaps="false"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:id="@+id/ButtonChooseImage"
+                android:layout_margin="20dp"
+                android:text="Choose Doctor Image"/>
+
+
+        </LinearLayout>
+
+        <Button
+            android:textColor="#fff"
+            android:background="#c11010"
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/ButtonUploadImage"
+            android:layout_marginTop="20dp"
+            android:textSize="16sp"
+            android:textAllCaps="false"
+            android:text="Add Doctor"/>
+
+    </LinearLayout>
+    </ScrollView>
+</LinearLayout>

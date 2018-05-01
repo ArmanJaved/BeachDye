@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "832817571401",
+    "firebase_url": "https://parkinsonaiproject-7ad32.firebaseio.com",
+    "project_id": "parkinsonaiproject-7ad32",
+    "storage_bucket": "parkinsonaiproject-7ad32.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:832817571401:android:9ffe5b99aefeca45",
+        "android_client_info": {
+          "package_name": "com.beachdye"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "832817571401-aq63inh46hdchse8036vkmf3geuf2s90.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.beachdye",
+            "certificate_hash": "cf57a37491007f47a0f8ca6b65850b4c79e7112b"
+          }
+        },
+        {
+          "client_id": "832817571401-8qi1lpvkmgc0j6l663hgj3iie5aboj0b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6Ymmhw6pQhERKZPWWLzXYN6QJpmceMaM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "832817571401-8qi1lpvkmgc0j6l663hgj3iie5aboj0b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

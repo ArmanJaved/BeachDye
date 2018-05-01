@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#e4e2e2"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    tools:context="com.beachdye.MainPage">
+
+    <LinearLayout
+
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+
+        <ImageView
+            android:src="@drawable/olxad"
+            android:scaleType="fitXY"
+            android:layout_width="match_parent"
+            android:layout_height="200dp" />
+
+        <Button
+            android:layout_margin="10dp"
+            android:layout_marginTop="4dp"
+            android:textAllCaps="false"
+            android:textStyle="normal"
+            android:textColor="#fff"
+            android:textSize="22sp"
+            android:text="Submit a Free Ad"
+            android:background="#c11010"
+            android:id="@+id/submitadd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+
+
+
+        <GridView
+            android:layout_marginTop="10dp"
+            android:numColumns="4"
+            android:gravity="center"
+            android:columnWidth="100dp"
+            android:stretchMode="columnWidth"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/grid"
+            />
+    </LinearLayout>
+
+</LinearLayout>
